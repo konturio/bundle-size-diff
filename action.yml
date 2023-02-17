@@ -1,4 +1,4 @@
-name: 'Bundle size diff'
+name: 'Vite bundle size diff'
 author: 'Nejc Zdovc & kontur.io'
 description: 'Report vite bundle size change in the PR'
 inputs:
