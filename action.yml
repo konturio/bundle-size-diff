@@ -1,6 +1,6 @@
 name: 'Bundle size diff'
-author: 'Nejc Zdovc'
-description: 'Report webpack bundle size change in the PR'
+author: 'Nejc Zdovc & kontur.io'
+description: 'Report vite bundle size change in the PR'
 inputs:
   base_path:
     description: 'Path to base stats file'
