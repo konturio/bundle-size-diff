@@ -17,10 +17,6 @@ var __copyProps = (to, from, except, desc) => {
   return to;
 };
 var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
-  // If the importer is in node compatibility mode or this is not an ESM
-  // file that has been converted to a CommonJS file using a Babel-
-  // compatible transform (i.e. "__esModule" has not been set), then set
-  // "default" to the CommonJS "module.exports" for node compatibility.
   isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
   mod
 ));
@@ -229,27 +225,27 @@ var require_core = __commonJS({
       process.env["PATH"] = `${inputPath}${path2.delimiter}${process.env["PATH"]}`;
     }
     exports.addPath = addPath;
-    function getInput(name, options) {
+    function getInput2(name, options) {
       const val = process.env[`INPUT_${name.replace(/ /g, "_").toUpperCase()}`] || "";
       if (options && options.required && !val) {
         throw new Error(`Input required and not supplied: ${name}`);
       }
       return val.trim();
     }
-    exports.getInput = getInput;
-    function setOutput(name, value) {
+    exports.getInput = getInput2;
+    function setOutput2(name, value) {
       command_1.issueCommand("set-output", { name }, value);
     }
-    exports.setOutput = setOutput;
+    exports.setOutput = setOutput2;
     function setCommandEcho(enabled) {
       command_1.issue("echo", enabled ? "on" : "off");
     }
     exports.setCommandEcho = setCommandEcho;
-    function setFailed(message) {
+    function setFailed2(message) {
       process.exitCode = ExitCode.Failure;
       error(message);
     }
-    exports.setFailed = setFailed;
+    exports.setFailed = setFailed2;
     function isDebug() {
       return process.env["RUNNER_DEBUG"] === "1";
     }
@@ -429,18 +425,18 @@ var require_filesize = __commonJS({
 });
 
 // index.ts
-var import_core2 = __toESM(require_core());
+var core2 = __toESM(require_core());
 var import_filesize = __toESM(require_filesize());
 
 // checkPaths.ts
 var import_node_path = __toESM(require("node:path"));
 
 // getInputs.ts
-var import_core = __toESM(require_core());
+var core = __toESM(require_core());
 var getInputs = () => ({
-  basePath: import_core.default.getInput("base_path"),
-  prPath: import_core.default.getInput("pr_path"),
-  excludedAssets: import_core.default.getInput("excluded_assets")
+  basePath: core.getInput("base_path"),
+  prPath: core.getInput("pr_path"),
+  excludedAssets: core.getInput("excluded_assets")
 });
 
 // checkPaths.ts
@@ -510,34 +506,30 @@ function generateData(assets) {
   if (!stats || !stats.total) {
     throw new Error(`Something went wrong with stats conversion, probably files are corrupted.`);
   }
-  import_core2.default.setOutput("base_file_size", stats.total.oldSize);
-  import_core2.default.setOutput("base_file_string", (0, import_filesize.default)(stats.total.oldSize));
-  import_core2.default.setOutput("pr_file_size", stats.total.newSize);
-  import_core2.default.setOutput("pr_file_string", (0, import_filesize.default)(stats.total.newSize));
-  import_core2.default.setOutput("diff_file_size", stats.total.diff);
-  import_core2.default.setOutput("diff_file_string", (0, import_filesize.default)(stats.total.diff));
-  import_core2.default.setOutput("percent", stats.total.diffPercentage.toFixed(2));
-  import_core2.default.setOutput("success", "true");
+  core2.setOutput("base_file_size", stats.total.oldSize);
+  core2.setOutput("base_file_string", (0, import_filesize.default)(stats.total.oldSize));
+  core2.setOutput("pr_file_size", stats.total.newSize);
+  core2.setOutput("pr_file_string", (0, import_filesize.default)(stats.total.newSize));
+  core2.setOutput("diff_file_size", stats.total.diff);
+  core2.setOutput("diff_file_string", (0, import_filesize.default)(stats.total.diff));
+  core2.setOutput("percent", stats.total.diffPercentage.toFixed(2));
+  core2.setOutput("success", "true");
 }
 async function run() {
   try {
     const assets = await checkPaths();
     generateData(assets);
   } catch (error) {
-    import_core2.default.setOutput("success", "false");
+    core2.setOutput("success", "false");
     const errorMessage = getErrorMessage(error);
-    import_core2.default.setFailed(errorMessage);
+    core2.setFailed(errorMessage);
   }
 }
 run();
-/*! Bundled license information:
-
-filesize/lib/filesize.js:
-  (**
-   * filesize
-   *
-   * @copyright 2020 Jason Mulligan <jason.mulligan@avoidwork.com>
-   * @license BSD-3-Clause
-   * @version 6.1.0
-   *)
-*/
+/**
+ * filesize
+ *
+ * @copyright 2020 Jason Mulligan <jason.mulligan@avoidwork.com>
+ * @license BSD-3-Clause
+ * @version 6.1.0
+ */

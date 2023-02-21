@@ -1,4 +1,4 @@
-import core from '@actions/core';
+import * as core from '@actions/core';
 import fileSize from 'filesize';
 import { checkPaths } from './checkPaths';
 import { getErrorMessage } from './getErrorMessage';

@@ -1,4 +1,4 @@
-import core from '@actions/core';
+import * as core from '@actions/core';
 
 export const getInputs = () => ({
   basePath: core.getInput('base_path'),
