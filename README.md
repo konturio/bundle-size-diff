@@ -107,7 +107,7 @@ build-pr:
   runs-on: ubuntu-latest
   steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Install dependencies
       run: npm ci
@@ -118,7 +118,7 @@ build-pr:
       run: npm run build-demo
 
     - name: Upload base stats.json
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: pr
         path: ./demo/demo-dist/stats.json
@@ -142,13 +142,13 @@ report:
       uses: actions/checkout@v2
 
     - name: Download base stats
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v3
       with:
         name: base
         path: base
 
     - name: Download PR stats
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v3
       with:
         name: pr
         path: pr
