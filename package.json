@@ -2,11 +2,15 @@
   "name": "bundle-size-diff",
   "version": "1.0.0",
   "description": "Github action for getting bundle size diffs for PR's",
-  "main": "index.js",
-  "type": "module",
+  "workspaces": [
+    "plugin"
+  ],
+  "main": "dist/index.js",
   "scripts": {
     "lint": "standard",
-    "build": "ncc build index.ts --license licenses.txt"
+    "build": "tsup index.ts",
+    "lint:plugin": "npm run lint --workspace=plugin",
+    "build:plugin": "npm run build --workspace=plugin"
   },
   "repository": {
     "type": "git",
@@ -33,9 +37,8 @@
   "devDependencies": {
     "@tsconfig/node18": "^1.0.1",
     "@types/node": "^18.14.0",
-    "@vercel/ncc": "^0.36.1",
-    "rollup-plugin-visualizer": "^5.9.0",
     "standard": "^16.0.3",
+    "tsup": "^6.6.3",
     "typescript": "^4.9.5",
     "vite": "^4.1.3"
   },
