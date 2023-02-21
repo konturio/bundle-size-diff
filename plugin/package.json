@@ -8,8 +8,8 @@
     "build": "tsup build src/index.ts --format esm,cjs --dts"
   },
   "exports": {
-    "require": "./dist/index.js",
-    "default": "./dist/index.module.js"
+    "require": "./dist/index.cjs",
+    "default": "./dist/index.js"
   },
   "main": "dist/index.cjs",
   "module": "dist/index.js",
