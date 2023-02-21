@@ -33,7 +33,7 @@ export function buildSizeReport({ filename = './size-report.json' }): Plugin {
       config = cfg;
     },
 
-    buildEnd() {
+    closeBundle() {
       writeFile(filename, JSON.stringify(report, null, 2), (err) => {
         if (err) {
           console.error(`Failed to save report in ${filename}`, err);
@@ -77,6 +77,7 @@ export function buildSizeReport({ filename = './size-report.json' }): Plugin {
           report.push(entry);
         }
       }
+      console.log('')
     },
   };
 }

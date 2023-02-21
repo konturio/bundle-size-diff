@@ -28,7 +28,7 @@ function buildSizeReport({ filename = "./size-report.json" }) {
     configResolved(cfg) {
       config = cfg;
     },
-    buildEnd() {
+    closeBundle() {
       writeFile(filename, JSON.stringify(report, null, 2), (err) => {
         if (err) {
           console.error(`Failed to save report in ${filename}`, err);
@@ -71,6 +71,7 @@ function buildSizeReport({ filename = "./size-report.json" }) {
           report.push(entry);
         }
       }
+      console.log("");
     }
   };
 }
