@@ -2,13 +2,20 @@ import path from 'node:path';
 import { getInputs } from './getInputs';
 import { LogEntry } from './plugin/src/types';
 
+const importJSON = async (path: string) => {
+  const json = await import(path, {
+    assert: { type: 'json' },
+  });
+  return json;
+};
+
 async function importReferenceReport(base: string): Promise<Array<LogEntry>> {
-  const report: Array<LogEntry> = await import(base);
+  const report: Array<LogEntry> = await importJSON(base);
   return report;
 }
 
 async function importPrReport(pr: string): Promise<Array<LogEntry>> {
-  const report: Array<LogEntry> = await import(pr);
+  const report: Array<LogEntry> = await importJSON(pr);
   return report;
 }
 
@@ -17,8 +24,8 @@ export async function checkPaths() {
   const reference = path.resolve(process.cwd(), basePath);
   const pr = path.resolve(process.cwd(), prPath);
 
-  let baserReport = await importReferenceReport(reference);
-  if (!baserReport) {
+  let refReport = await importReferenceReport(reference);
+  if (!refReport) {
     throw new Error(`Base path is not correct. Current input: ${reference}`);
   }
 
@@ -29,12 +36,12 @@ export async function checkPaths() {
 
   if (excludedAssets) {
     const regex = new RegExp(excludedAssets);
-    baserReport = baserReport.filter((asset) => !asset.name.match(regex));
+    refReport = refReport.filter((asset) => !asset.name.match(regex));
     prReport = prReport.filter((asset) => !asset.name.match(regex));
   }
 
   return {
-    base: baserReport,
+    base: refReport,
     pr: prReport,
   };
 }
