@@ -77,7 +77,6 @@ export function buildSizeReport({ filename = './size-report.json' }): Plugin {
           report.push(entry);
         }
       }
-      console.log('')
     },
   };
 }
