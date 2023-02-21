@@ -1,4 +1,4 @@
-# Bundle size diff from webpack with Github Actions
+# Bundle size diff from vite with Github Actions
 
 Action that allows you to generate diff report between branches. This way you always know when things go sideways :)
 
@@ -6,31 +6,49 @@ Action that allows you to generate diff report between branches. This way you al
 
 ## Inputs
 
-| Name | Description | Required |
-| ---- | ----------- | -------- |
-| base_path | Path of base branch stats file  | yes |
-| pr_path | Path of PR branch stats file | yes |
-| excluded_assets | Regex that will exclude some assets | no |
+| Name            | Description                         | Required |
+| --------------- | ----------------------------------- | -------- |
+| base_path       | Path of base branch stats file      | yes      |
+| pr_path         | Path of PR branch stats file        | yes      |
+| excluded_assets | Regex that will exclude some assets | no       |
 
 ## Output
 
-| Name | Description | Return |
-| ---- | ----------- | ------------ |
-| success | Tells you if diff was successfully generated  | `'true'` / `'false'` |
-| base_file_size | Bundle size of base branch that you are targeting | bytes |
-| base_file_string | Formatted bundle size of base branch | example: `8.1 kb` |
-| pr_file_size | Bundle size of PR branch | bytes |
-| pr_file_string | Formatted bundle size of PR branch | example:  `8.1 kb` |
-| diff_file_size | Diff size of compared branches | bytes |
-| diff_file_string | Formatted diff size between branches | example: `8.1 kb` |
-| percent | Diff size of compared presented in percentage | example: `0.14%` |
+| Name             | Description                                       | Return               |
+| ---------------- | ------------------------------------------------- | -------------------- |
+| success          | Tells you if diff was successfully generated      | `'true'` / `'false'` |
+| base_file_size   | Bundle size of base branch that you are targeting | bytes                |
+| base_file_string | Formatted bundle size of base branch              | example: `8.1 kb`    |
+| pr_file_size     | Bundle size of PR branch                          | bytes                |
+| pr_file_string   | Formatted bundle size of PR branch                | example: `8.1 kb`    |
+| diff_file_size   | Diff size of compared branches                    | bytes                |
+| diff_file_string | Formatted diff size between branches              | example: `8.1 kb`    |
+| percent          | Diff size of compared presented in percentage     | example: `0.14%`     |
 
 ## Usage
-The key thing that you will need to do when using this action is to create a stats file from webpack.
 
-You can see the simple [example](/demo) that we used in this repo for testing purposes.<br>
-You can read more about `webpack-bundle-analyzer` on [authors page](https://github.com/webpack-contrib/webpack-bundle-analyzer).
+### Add vite plugin
 
+1. Install plugin that generate json file with assets sizes.
+
+```
+npm i https://github.com/konturio/bundle-size-diff
+```
+
+2. Add this plugin to your vite config
+
+```
+import buildSizeReport from 'bundle-size-diff/plugin';
+
+ defineConfig({
+   ...
+   plugins: [
+    buildSizeReport(),
+   ]
+ })
+```
+
+### Setup github workflow 
 To save action minutes I would suggest that you have an action that generates a new state file every time that you merge commit
 in the main branch.
 
@@ -38,10 +56,12 @@ An alternative approach is to generate a state file for a base branch on the fly
 
 Let's break down our workflow file.
 
-### Build base
+
+#### Build base
+
 The first job is for building a base branch. In most cases, this would be the main/master branch.
 
-Important note here is that we add `ref: ${{ github.base_ref }}` in checkout action. 
+Important note here is that we add `ref: ${{ github.base_ref }}` in checkout action.
 This tells action to checkout base that you set for the PR.
 
 Then we just do regular dependency install and build of our script.
@@ -54,29 +74,30 @@ build-base:
   name: Build base
   runs-on: ubuntu-latest
   steps:
-  - name: Checkout
-    uses: actions/checkout@v2
-    with:
-      ref: ${{ github.base_ref }}
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        ref: ${{ github.base_ref }}
 
-  - name: Install dependencies
-    run: npm ci
-    env:
-      NODE_AUTH_TOKEN: ${{secrets.TOKEN_REPO}}
+    - name: Install dependencies
+      run: npm ci
+      env:
+        NODE_AUTH_TOKEN: ${{secrets.TOKEN_REPO}}
 
-  - name: Build
-    run: npm run build-demo
+    - name: Build
+      run: npm run build-demo
 
-  - name: Upload base stats.json
-    uses: actions/upload-artifact@v2
-    with:
-      name: base
-      path: ./demo/demo-dist/stats.json
-      retention-days: 1
+    - name: Upload base stats.json
+      uses: actions/upload-artifact@v2
+      with:
+        name: base
+        path: ./demo/demo-dist/stats.json
+        retention-days: 1
 ```
 
 ### Build PR
-Next thing is to build PR. 
+
+Next thing is to build PR.
 
 As you can see checkout now just checkouts default which is head of the PR.
 
@@ -85,26 +106,27 @@ build-pr:
   name: Build PR
   runs-on: ubuntu-latest
   steps:
-  - name: Checkout
-    uses: actions/checkout@v2
+    - name: Checkout
+      uses: actions/checkout@v2
 
-  - name: Install dependencies
-    run: npm ci
-    env:
-      NODE_AUTH_TOKEN: ${{secrets.TOKEN_REPO}}
+    - name: Install dependencies
+      run: npm ci
+      env:
+        NODE_AUTH_TOKEN: ${{secrets.TOKEN_REPO}}
 
-  - name: Build
-    run: npm run build-demo
+    - name: Build
+      run: npm run build-demo
 
-  - name: Upload base stats.json
-    uses: actions/upload-artifact@v2
-    with:
-      name: pr
-      path: ./demo/demo-dist/stats.json
-      retention-days: 1
+    - name: Upload base stats.json
+      uses: actions/upload-artifact@v2
+      with:
+        name: pr
+        path: ./demo/demo-dist/stats.json
+        retention-days: 1
 ```
 
 ### Compare builds
+
 Now that we have stats files ready, we just need to download them which we are doing with [actions/download-artifact](https://github.com/actions/download-artifact), and pass them to our action.
 
 In the last section, we take values that were returned from our action and print it out as a nice table via [NejcZdovc/comment-pr](https://github.com/NejcZdovc/comment-pr).
@@ -116,41 +138,42 @@ report:
   needs: [build-base, build-pr]
 
   steps:
-  - name: Checkout PR
-    uses: actions/checkout@v2
+    - name: Checkout PR
+      uses: actions/checkout@v2
 
-  - name: Download base stats
-    uses: actions/download-artifact@v2
-    with:
-      name: base
-      path: base
+    - name: Download base stats
+      uses: actions/download-artifact@v2
+      with:
+        name: base
+        path: base
 
-  - name: Download PR stats
-    uses: actions/download-artifact@v2
-    with:
-      name: pr
-      path: pr
+    - name: Download PR stats
+      uses: actions/download-artifact@v2
+      with:
+        name: pr
+        path: pr
 
-  - name: Get diff
-    id: get-diff
-    uses: NejcZdovc/bundle-size-diff@v1
-    with:
-      base_path: './base/stats.json'
-      pr_path: './pr/stats.json'
+    - name: Get diff
+      id: get-diff
+      uses: NejcZdovc/bundle-size-diff@v1
+      with:
+        base_path: './base/stats.json'
+        pr_path: './pr/stats.json'
 
-  - name: Comment
-    uses: NejcZdovc/comment-pr@v1.1.1
-    with:
-      file: 'comment.md'
-    env:
-      GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-      OLD: ${{steps.get-diff.outputs.base_file_string}}
-      NEW: ${{steps.get-diff.outputs.pr_file_string}}
-      DIFF: ${{steps.get-diff.outputs.diff_file_string}}
-      DIFF_PERCENT: ${{steps.get-diff.outputs.percent}}
+    - name: Comment
+      uses: NejcZdovc/comment-pr@v1.1.1
+      with:
+        file: 'comment.md'
+      env:
+        GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+        OLD: ${{steps.get-diff.outputs.base_file_string}}
+        NEW: ${{steps.get-diff.outputs.pr_file_string}}
+        DIFF: ${{steps.get-diff.outputs.diff_file_string}}
+        DIFF_PERCENT: ${{steps.get-diff.outputs.percent}}
 ```
 
 ## Bugs
+
 Please file an issue for bugs, missing documentation, or unexpected behavior.
 
 ## LICENSE

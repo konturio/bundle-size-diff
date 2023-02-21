@@ -9,7 +9,7 @@ function isDefined<T>(value: T | undefined | null): value is T {
   return value != null;
 }
 
-export function buildReporterPlugin({ filename = './size-report.json' }): Plugin {
+export function buildSizeReport({ filename = './size-report.json' }): Plugin {
   const compress = promisify(gzip);
   const report = new Array<LogEntry>();
   let config: ResolvedConfig;
@@ -27,7 +27,7 @@ export function buildReporterPlugin({ filename = './size-report.json' }): Plugin
   }
 
   return {
-    name: 'vite:stats-reporter',
+    name: 'vite:build-size-report',
 
     configResolved(cfg: ResolvedConfig) {
       config = cfg;
