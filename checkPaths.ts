@@ -6,7 +6,7 @@ const importJSON = async (path: string) => {
   const json = await import(path, {
     assert: { type: 'json' },
   });
-  return json;
+  return json.default;
 };
 
 async function importReferenceReport(base: string): Promise<Array<LogEntry>> {

@@ -2340,9 +2340,9 @@ var getInputs = () => {
     prPath: core.getInput("pr_path"),
     excludedAssets: core.getInput("excluded_assets")
   };
-  if (!inputs.basePath)
+  if (inputs.basePath === "")
     throw new Error("`basePath` property is required");
-  if (!inputs.prPath)
+  if (inputs.prPath === "")
     throw new Error("`prPath` property is required");
   return inputs;
 };
@@ -2352,7 +2352,7 @@ var importJSON = async (path2) => {
   const json = await import(path2, {
     assert: { type: "json" }
   });
-  return json;
+  return json.default;
 };
 async function importReferenceReport(base) {
   const report = await importJSON(base);
