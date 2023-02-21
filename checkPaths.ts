@@ -1,6 +1,6 @@
-import path from 'path';
+import path from 'node:path';
 import { getInputs } from './getInputs';
-import { LogEntry } from './plugin/types';
+import { LogEntry } from './plugin/src/types';
 
 async function importReferenceReport(base: string): Promise<Array<LogEntry>> {
   const report: Array<LogEntry> = await import(base);

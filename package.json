@@ -8,7 +8,7 @@
   "main": "dist/index.js",
   "scripts": {
     "lint": "standard",
-    "build": "tsup index.ts",
+    "build": "esbuild index.ts --bundle --platform=node --target=node16  --outfile=dist/index.js",
     "lint:plugin": "npm run lint --workspace=plugin",
     "build:plugin": "npm run build --workspace=plugin"
   },
@@ -31,16 +31,15 @@
   "dependencies": {
     "@actions/core": "^1.2.6",
     "@actions/github": "^4.0.0",
-    "filesize": "^6.1.0",
-    "webpack-stats-diff": "^1.3.0"
+    "esbuild": "^0.17.10",
+    "filesize": "^6.1.0"
   },
   "devDependencies": {
     "@tsconfig/node16": "^1.0.3",
     "@types/node": "^16.14.0",
     "standard": "^16.0.3",
     "tsup": "^6.6.3",
-    "typescript": "^4.9.5",
-    "vite": "^4.1.3"
+    "typescript": "^4.9.5"
   },
   "standard": {
     "ignore": [
